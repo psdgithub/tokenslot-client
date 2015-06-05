@@ -39,7 +39,7 @@ class Client
 				$curl = curl_init();
 				curl_setopt($curl, CURLOPT_URL, $url);
 				curl_setopt($curl, CURLOPT_POST, count($params));
-				curl_setopt($curl, CURLOPT_POSTFIELDS, join('&', $params));
+				curl_setopt($curl, CURLOPT_POSTFIELDS, join('&', $params));		
 				$get = curl_exec($curl);
 				curl_close($curl);
 				$get = ob_get_contents();
@@ -50,7 +50,7 @@ class Client
 				$curl = curl_init();
 				curl_setopt($curl, CURLOPT_URL, $url);
 				curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PATCH');
-				curl_setopt($curl, CURLOPT_POSTFIELDS, join('&', $params));
+				curl_setopt($curl, CURLOPT_POSTFIELDS, join('&', $params));					
 				$get = curl_exec($curl);
 				curl_close($curl);
 				$get = ob_get_contents();
@@ -61,14 +61,13 @@ class Client
 				$curl = curl_init();
 				curl_setopt($curl, CURLOPT_URL, $url);
 				curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
-				curl_setopt($curl, CURLOPT_POSTFIELDS, join('&', $params));
+				curl_setopt($curl, CURLOPT_POSTFIELDS, join('&', $params));				
 				$get = curl_exec($curl);
 				curl_close($curl);
 				$get = ob_get_contents();
 				ob_end_clean();			
 				break;
 		}
-		
 		$decode =  json_decode(trim($get), true);
 		return $decode;
 	}
@@ -115,8 +114,11 @@ class Client
 		if(!is_array($json) OR !isset($json['payload'])){
 			return false;
 		}
-		if(!is_callable($function)){
-			return $json['payload'];	
+		if(!$function OR !is_callable($function)){
+			if(is_array($json['payload'])){
+				return $json['payload'];
+			}
+			return json_decode($json['payload'], true);	
 		}
 		return $function($json['payload']);
 	}
@@ -208,6 +210,7 @@ class Client
 	{
 		return $this->call('slots/'.$id.'/payments');
 	}
+	
 	
 	
 }
