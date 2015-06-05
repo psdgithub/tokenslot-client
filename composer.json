@@ -1,0 +1,22 @@
+{
+    "name": "tokenly/tokenslot-client",
+    "description": "A client library for Token Slot",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nick Rathman",
+            "email": "nick@tokenly.com",
+            "homepage": "http://tokenly.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.0",
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4"
+    },
+    "autoload": {
+        "psr-0": {"Tokenly\\TokenSlotClient": "src"}
+    }
+}
