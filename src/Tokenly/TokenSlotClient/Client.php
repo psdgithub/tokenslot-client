@@ -191,6 +191,25 @@ class Client
 	}
 	
 	/*
+	 * Fetches data for a slot, or if it does not exist, generates a new one.
+	 * @param string $nickname alias you can use instead of slot public_id to make payment requests or get info	 
+	 * @param string $asset the counterparty asset/token to accept
+	 * @param integer $min_conf minimum number of confirmations before considering a payment to this slot as "complete"
+	 * @param string $forward_address custom bitcoin address to forward payments to
+	 * @param string $webhook URL of custom webhook to receive payments to* 
+	 * @param string $label custom internal reference label
+	 * @return Array Slot object
+	 * */
+	public function getOrCreateSlot($nickname, $asset, $min_conf = 0, $forward_address = false, $webhook = false, $label = '')
+	{
+		$getSlot = $this->getSlot($nickname);
+		if($getSlot){
+			return $getSlot;
+		}
+		return $this->createSlot($asset, $webhook, $forward_address, $min_conf, $label, $nickname);
+	}
+	
+	/*
 	 * Updates information on a specific slot
 	 * @param string $slot can be slot public ID or nickname
 	 * @param Array $data slot parameters to update, refer to main API documentation for updateable fields.
