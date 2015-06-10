@@ -75,13 +75,14 @@ class Client
 	/**
 	 * Generates a new payment request
 	 * @param string $slot can be slot public ID or nickname
+	 * @param string $token name of the asset which you want to accept for this payment
 	 * @param integer $total the total amount of the order, in satoshis. leave 0 for "pay what you want"
 	 * @param string $ref extra reference string you can include
 	 * @return Array Payment Request object
 	 * */
-	public function newPayment($slot, $total = 0, $ref = null)
+	public function newPayment($slot, $token, $total = 0, $ref = null)
 	{
-		$get = $this->call('payments/request/'.$slot, array('total' => (integer)$total, 'ref' => $ref));		
+		$get = $this->call('payments/request/'.$slot, array('token' => strtoupper($token), 'total' => (integer)$total, 'ref' => $ref));		
 		return $get;
 	}
 	
@@ -150,7 +151,7 @@ class Client
 	
 	/*
 	 * Creates a new "slot" to receive payments at for a specific token
-	 * @param string $asset the counterparty asset/token to accept
+	 * @param mixed $asset the counterparty asset/token to accept. can be an array if accepting multiple tokens
 	 * @param string $webhook URL of custom webhook to receive payments to
 	 * @param string $forward_address custom bitcoin address to forward payments to
 	 * @param integer $min_conf minimum number of confirmations before considering a payment to this slot as "complete"
@@ -161,7 +162,7 @@ class Client
 	 * */	
 	public function createSlot($asset, $webhook = false, $forward_address = false, $min_conf = 0, $label = '', $nickname = '')
 	{
-		$data = array('asset' => $asset, 'webhook' => $webhook, 'forward_address' => $forward_address,
+		$data = array('tokens' => $asset, 'webhook' => $webhook, 'forward_address' => $forward_address,
 					  'min_conf' => $min_conf, 'label' => $label, 'nickname' => $nickname);
 		return $this->call('slots', $data, 'POST');
 	}
@@ -193,7 +194,7 @@ class Client
 	/*
 	 * Fetches data for a slot, or if it does not exist, generates a new one.
 	 * @param string $nickname alias you can use instead of slot public_id to make payment requests or get info	 
-	 * @param string $asset the counterparty asset/token to accept
+	 * @param mixed $asset the counterparty asset/token to accept. can be an array if multiple tokens to accept
 	 * @param integer $min_conf minimum number of confirmations before considering a payment to this slot as "complete"
 	 * @param string $forward_address custom bitcoin address to forward payments to
 	 * @param string $webhook URL of custom webhook to receive payments to* 
