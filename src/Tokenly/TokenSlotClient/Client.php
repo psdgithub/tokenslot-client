@@ -81,9 +81,11 @@ class Client
 	 * @param string $token name of the asset which you want to accept for this payment
 	 * @param integer $total the total amount of the order, in satoshis. leave 0 for "pay what you want"
 	 * @param string $ref extra reference string you can include
+	 * @param string $peg optional currency you would like peg payment value to (if set, leave $total = 0, total will be auto generated)
+	 * @param integer $peg_value defines pegged amount for this payment, converted to integer. e.g pegging an item to $10.00, $peg_value = 1000
 	 * @return Array Payment Request object
 	 * */
-	public function newPayment($slot, $token, $total = 0, $ref = null)
+	public function newPayment($slot, $token, $total = 0, $ref = null, $peg = '', $peg_value = 0)
 	{
 		$get = $this->call('payments/request/'.$slot, array('token' => strtoupper($token), 'total' => (integer)$total, 'ref' => $ref));		
 		return $get;
