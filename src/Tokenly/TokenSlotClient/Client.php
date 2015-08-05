@@ -87,7 +87,7 @@ class Client
 	 * */
 	public function newPayment($slot, $token, $total = 0, $ref = null, $peg = '', $peg_value = 0)
 	{
-		$get = $this->call('payments/request/'.$slot, array('token' => strtoupper($token), 'total' => (integer)$total, 'ref' => $ref));		
+		$get = $this->call('payments/request/'.$slot, array('token' => strtoupper($token), 'total' => (integer)$total, 'ref' => $ref, 'peg' => $peg, 'peg_total' => $peg_value));		
 		return $get;
 	}
 	
