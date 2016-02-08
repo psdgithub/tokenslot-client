@@ -83,11 +83,12 @@ class Client
 	 * @param string $ref extra reference string you can include
 	 * @param string $peg optional currency you would like peg payment value to (if set, leave $total = 0, total will be auto generated)
 	 * @param integer $peg_value defines pegged amount for this payment, converted to integer. e.g pegging an item to $10.00, $peg_value = 1000
+	 * @param string $forward_address set custom forward address to send these funds to after confirmation. Set to an array of {address: split_percentage} for multiple forwarding addresses
 	 * @return Array Payment Request object
 	 * */
-	public function newPayment($slot, $token, $total = 0, $ref = null, $peg = '', $peg_value = 0)
+	public function newPayment($slot, $token, $total = 0, $ref = null, $peg = '', $peg_value = 0, $forward_address = null)
 	{
-		$get = $this->call('payments/request/'.$slot, array('token' => strtoupper($token), 'total' => (integer)$total, 'ref' => $ref, 'peg' => $peg, 'peg_total' => $peg_value));		
+		$get = $this->call('payments/request/'.$slot, array('token' => strtoupper($token), 'total' => (integer)$total, 'ref' => $ref, 'peg' => $peg, 'peg_total' => $peg_value, 'forward_address' => $forward_address));		
 		return $get;
 	}
 	
