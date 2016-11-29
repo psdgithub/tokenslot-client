@@ -84,11 +84,16 @@ class Client
 	 * @param string $peg optional currency you would like peg payment value to (if set, leave $total = 0, total will be auto generated)
 	 * @param integer $peg_value defines pegged amount for this payment, converted to integer. e.g pegging an item to $10.00, $peg_value = 1000
 	 * @param string $forward_address set custom forward address to send these funds to after confirmation. Set to an array of {address: split_percentage} for multiple forwarding addresses
-	 * @return Array Payment Request object
+	 * @param integer $min_conf custom min_conf setting specific to this invoice
+     * @return Array Payment Request object
 	 * */
-	public function newPayment($slot, $token, $total = 0, $ref = null, $peg = '', $peg_value = 0, $forward_address = null)
+	public function newPayment($slot, $token, $total = 0, $ref = null, $peg = '', $peg_value = 0, $forward_address = null, $min_conf = null)
 	{
-		$get = $this->call('payments/request/'.$slot, array('token' => strtoupper($token), 'total' => (integer)$total, 'ref' => $ref, 'peg' => $peg, 'peg_total' => $peg_value, 'forward_address' => $forward_address));		
+        $params = array('token' => strtoupper($token), 'total' => (integer)$total, 'ref' => $ref, 'peg' => $peg, 'peg_total' => $peg_value, 'forward_address' => $forward_address);
+        if($min_conf != null){
+            $params['min_conf'] = $min_conf;
+        }
+		$get = $this->call('payments/request/'.$slot, $params);		
 		return $get;
 	}
 	
