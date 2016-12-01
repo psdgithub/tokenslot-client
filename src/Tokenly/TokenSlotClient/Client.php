@@ -90,7 +90,7 @@ class Client
 	public function newPayment($slot, $token, $total = 0, $ref = null, $peg = '', $peg_value = 0, $forward_address = null, $min_conf = null)
 	{
         $params = array('token' => strtoupper($token), 'total' => (integer)$total, 'ref' => $ref, 'peg' => $peg, 'peg_total' => $peg_value, 'forward_address' => $forward_address);
-        if($min_conf != null){
+        if($min_conf !== null){
             $params['min_conf'] = $min_conf;
         }
 		$get = $this->call('payments/request/'.$slot, $params);		
