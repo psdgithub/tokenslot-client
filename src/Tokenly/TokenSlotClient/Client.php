@@ -85,13 +85,17 @@ class Client
 	 * @param integer $peg_value defines pegged amount for this payment, converted to integer. e.g pegging an item to $10.00, $peg_value = 1000
 	 * @param string $forward_address set custom forward address to send these funds to after confirmation. Set to an array of {address: split_percentage} for multiple forwarding addresses
 	 * @param integer $min_conf custom min_conf setting specific to this invoice
+     * @param integer $custom_timeout optional timeout (in seconds) for this payment if you do not want the default 48 hour expiry time* 
      * @return Array Payment Request object
 	 * */
-	public function newPayment($slot, $token, $total = 0, $ref = null, $peg = '', $peg_value = 0, $forward_address = null, $min_conf = null)
+	public function newPayment($slot, $token, $total = 0, $ref = null, $peg = '', $peg_value = 0, $forward_address = null, $min_conf = null, $custom_timeout = null)
 	{
         $params = array('token' => strtoupper($token), 'total' => (integer)$total, 'ref' => $ref, 'peg' => $peg, 'peg_total' => $peg_value, 'forward_address' => $forward_address);
         if($min_conf !== null){
             $params['min_conf'] = $min_conf;
+        }
+        if($custom_timeout != null){
+            $params['expire_timeout'] = $custom_timeout;
         }
 		$get = $this->call('payments/request/'.$slot, $params);		
 		return $get;
@@ -168,13 +172,17 @@ class Client
 	 * @param integer $min_conf minimum number of confirmations before considering a payment to this slot as "complete"
 	 * @param string $label custom internal reference label
 	 * @param string $nickname alias you can use instead of slot public_id to make payment requests or get info
+     * @param integer $custom_timeout optional timeout (in seconds) for payments made from this slot if you do not want the default 48 hour expiry time
 	 * @return Array Slot object
 	 * 
 	 * */	
-	public function createSlot($asset, $webhook = false, $forward_address = false, $min_conf = 0, $label = '', $nickname = '')
+	public function createSlot($asset, $webhook = false, $forward_address = false, $min_conf = 0, $label = '', $nickname = '', $custom_timeout = null)
 	{
 		$data = array('tokens' => $asset, 'webhook' => $webhook, 'forward_address' => $forward_address,
 					  'min_conf' => $min_conf, 'label' => $label, 'nickname' => $nickname);
+        if($custom_timeout != null){
+            $data['expire_timeout'] = $custom_timeout;
+        }
 		return $this->call('slots', $data, 'POST');
 	}
 	
@@ -212,13 +220,13 @@ class Client
 	 * @param string $label custom internal reference label
 	 * @return Array Slot object
 	 * */
-	public function getOrCreateSlot($nickname, $asset, $min_conf = 0, $forward_address = false, $webhook = false, $label = '')
+	public function getOrCreateSlot($nickname, $asset, $min_conf = 0, $forward_address = false, $webhook = false, $label = '', $custom_timeout = null)
 	{
 		$getSlot = $this->getSlot($nickname);
 		if($getSlot){
 			return $getSlot;
 		}
-		return $this->createSlot($asset, $webhook, $forward_address, $min_conf, $label, $nickname);
+		return $this->createSlot($asset, $webhook, $forward_address, $min_conf, $label, $nickname, $custom_timeout);
 	}
 	
 	/*
